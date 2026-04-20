@@ -1,0 +1,99 @@
+#!name=Meta + X + TikTok + WA 极限崩坏 v2
+#!desc=强化推荐流破坏 + 广告压制（纯本地）
+
+########################
+# MITM
+########################
+
+[MITM]
+hostname = %APPEND%
+*.instagram.com,
+*.facebook.com,
+*.fbcdn.net,
+*.messenger.com,
+*.twitter.com,
+*.tiktokv.com,
+*.byteoversea.com,
+*.whatsapp.com,
+*.whatsapp.net
+
+
+########################
+# URL REWRITE（强化版：扩大匹配范围）
+########################
+
+[URL Rewrite]
+
+######## INSTAGRAM（扩大到推荐层） ########
+
+# feed + 推荐流
+^https:\/\/i\.instagram\.com\/api\/v\d+\/feed\/.* url reject-json
+^https:\/\/i\.instagram\.com\/api\/v\d+\/discover\/.* url reject-json
+^https:\/\/i\.instagram\.com\/api\/v\d+\/explore\/.* url reject-json
+^https:\/\/i\.instagram\.com\/api\/v\d+\/feed\/reels.* url reject-json
+
+# 广告 & 注入流
+^https:\/\/graph\.instagram\.com\/.*ads.* url reject
+^https:\/\/.*instagram.*\/.*suggest.* url reject-json
+
+
+######## FACEBOOK（扩大推荐层） ########
+
+^https:\/\/graph\.facebook\.com\/v\d+\/feed.* url reject-json
+^https:\/\/graph\.facebook\.com\/v\d+\/stories.* url reject-json
+^https:\/\/graph\.facebook\.com\/v\d+\/marketplace.* url reject-json
+^https:\/\/graph\.facebook\.com\/v\d+\/suggest.* url reject-json
+^https:\/\/graph\.facebook\.com\/.*ads.* url reject
+
+
+######## X (TWITTER)（时间线压制） ########
+
+# timeline 主接口
+^https:\/\/api\.twitter\.com\/2\/timeline.* url reject-json
+^https:\/\/twitter\.com\/i\/api\/2\/timeline.* url reject-json
+^https:\/\/api\.twitter\.com\/2\/home.* url reject-json
+
+
+######## TIKTOK（强化 feed 破坏） ########
+
+^https:\/\/api\.tiktokv\.com\/aweme\/v1\/feed.* url reject-json
+^https:\/\/api16-normal.*\/aweme\/v1\/feed.* url reject-json
+^https:\/\/.*tiktok.*\/recommend.* url reject-json
+
+
+########################
+# RULE（极限压制分流）
+########################
+
+[Rule]
+
+######## META ########
+DOMAIN-SUFFIX,instagram.com,PROXY
+DOMAIN-SUFFIX,facebook.com,PROXY
+DOMAIN-SUFFIX,fbcdn.net,PROXY
+DOMAIN-SUFFIX,messenger.com,PROXY
+
+######## X ########
+DOMAIN-SUFFIX,twitter.com,PROXY
+DOMAIN-SUFFIX,twimg.com,PROXY
+DOMAIN-SUFFIX,api.twitter.com,PROXY
+
+######## TIKTOK ########
+DOMAIN-SUFFIX,tiktok.com,PROXY
+DOMAIN-SUFFIX,tiktokv.com,PROXY
+DOMAIN-SUFFIX,byteoversea.com,PROXY
+
+######## WHATSAPP（保持通信） ########
+DOMAIN-SUFFIX,whatsapp.com,PROXY
+DOMAIN-SUFFIX,whatsapp.net,PROXY
+DOMAIN-SUFFIX,mmg.whatsapp.net,PROXY
+DOMAIN-SUFFIX,static.whatsapp.net,PROXY
+
+######## 强制追踪拦截 ########
+DOMAIN-SUFFIX,analytics.instagram.com,REJECT
+DOMAIN-SUFFIX,connect.facebook.net,REJECT
+DOMAIN-SUFFIX,tracking.facebook.com,REJECT
+DOMAIN-SUFFIX,ads.facebook.com,REJECT
+DOMAIN-SUFFIX,ads.instagram.com,REJECT
+
+FINAL,PROXY
